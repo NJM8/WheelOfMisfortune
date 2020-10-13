@@ -66,6 +66,7 @@ import {
   EXOTICS,
   BASE_RAID,
 } from "@/helpers/options.js";
+import cloneDeep from "lodash/cloneDeep";
 
 import GuardianInput from "@/components/GuardianInput.vue";
 import GuardianClass from "@/components/GuardianClass.vue";
@@ -79,7 +80,7 @@ export default {
     return {
       showInfo: false,
       newEncounterName: "",
-      raid: { ...BASE_RAID },
+      raid: cloneDeep(BASE_RAID),
     };
   },
   computed: {
@@ -193,7 +194,8 @@ export default {
       thisguardian.subclass = this.genRandomOption(SUB_CLASSES);
     },
     resetRaid() {
-      this.raid = { ...BASE_RAID };
+      this.raid = {};
+      this.raid = cloneDeep(BASE_RAID);
     },
   },
 };
