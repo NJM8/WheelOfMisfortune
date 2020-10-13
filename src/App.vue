@@ -2,48 +2,7 @@
   <div id="app" class="appContainer">
     <img src="./assets/ProphecyBackground.jpeg" alt="" class="background" />
     <h1 class="card">Wheel of Misfortune</h1>
-    <button class="baseButton infoButton" @click="showInfo = !showInfo">
-      Info
-    </button>
-    <div v-if="showInfo" class="infoPosition">
-      <p>Welcome to Wheel of Misfortune</p>
-      <p>
-        Click Choose Raid to get started, fill out all guardian names, then you
-        will be able to select classes and subClasses
-      </p>
-      <p>Finally click Add Encounter to generate encounter loadouts</p>
-      <p>
-        Most of the encounter options are easy to understand, if the option does
-        not state anything about heavy, ie: Double Shotguns, they don't get to
-        use heavy.
-      </p>
-      <p>
-        I tried to make most of the options middle of the road, not too hard but
-        still fun.
-      </p>
-      <p>
-        There are some options that will make things a HUGE pain in the ass.
-        These sometimes lead to the most fun, try to stick with it!
-      </p>
-      <p>
-        There are some options with a +Exotic modifier, in this case your exotic
-        weapon is chosen for you.
-      </p>
-      <p>
-        Also there is a +Respin on one option, this is because this is a team
-        wide affect with a re-roll for the individuals weapon loadout, again
-        this will be done automatically.
-      </p>
-      <p>
-        If you get two of the same options in one encounter, re roll for more
-        variation. Also if a guardian gets the same roll twice in a row, re
-        roll.
-      </p>
-      <p>
-        If any encounter gets too stressful or is too hard with the random
-        loadout, feel free to use the meta to get through things.
-      </p>
-    </div>
+    <InfoModal />
     <div style="width: 200px">
       <button @click="chooseRaid" class="baseButton marginRight">
         Choose Raid
@@ -56,7 +15,7 @@
     <br />
     <div v-if="raid.name.length > 0" class="guardianContainer">
       <div v-for="(guardian, index) in raid.guardians" :key="index">
-        <Guardian v-model="raid.guardians[index].name" :g-num="index" />
+        <GuardianInput v-model="raid.guardians[index].name" :g-num="index" />
       </div>
     </div>
     <br />
@@ -66,20 +25,11 @@
       </button>
     </div>
     <br />
-    <div v-if="showEncounters" class="guardianContainer">
-      <div v-for="(guardian, index) in raid.guardians" :key="index">
-        <div class="encounterContainer guardianCard">
-          <span class="guardianName marginRight">{{ guardian.name }}:</span>
-          <span class="guardianClass marginRight"
-            >{{ guardian.affinity }}, {{ guardian.class }},
-            {{ guardian.subclass }}</span
-          >
-          <button @click="reRollClass(index)" class="baseButton">
-            Re Roll
-          </button>
-        </div>
-      </div>
-    </div>
+    <GuardianClass
+      v-if="showEncounters"
+      :guardians="raid.guardians"
+      @re-roll-class="reRollClass"
+    />
     <div v-if="showEncounters" class="mainButton">
       <input
         type="text"
@@ -95,43 +45,12 @@
         Add Encounter
       </button>
     </div>
-    <div class="encounterContainer">
-      <div
-        v-for="(encounter, index) in raid.encounters"
-        :key="index"
-        class="guardianCard encounterMargin"
-      >
-        <div class="encounterContainer">
-          <span class="encounterName">{{ encounter.name }}</span>
-          <span class="">{{ encounter.teamMod }}</span>
-        </div>
-        <div
-          v-for="(encounterRoll, guardianName) in encounter.rolls"
-          :key="guardianName"
-        >
-          <div class="encounterInnerContainer">
-            <span class="guardianName marginRight">{{ guardianName }}:</span>
-            <p class="marginRight">{{ encounterRoll }}</p>
-            <button
-              @click="reRollEncounter(index, guardianName)"
-              class="baseButton marginRight"
-            >
-              Re Roll
-            </button>
-            <button
-              v-if="encounterRoll.includes('+Exotic')"
-              @click="reRollEncounterExotic(index, guardianName, encounterRoll)"
-              class="baseButton"
-            >
-              Re Roll Exotic
-            </button>
-          </div>
-        </div>
-        <button class="baseButton mainButton" @click="removeEncounter(index)">
-          Remove Encounter
-        </button>
-      </div>
-    </div>
+    <EncounterContainer
+      :encounters="raid.encounters"
+      @re-roll-guardian-encounter="reRollGuardianEncounter"
+      @re-roll-guardian-exotic="reRollGuardianExotic"
+      @remove-encounter="removeEncounter"
+    />
   </div>
 </template>
 
@@ -148,11 +67,14 @@ import {
   BASE_RAID,
 } from "@/helpers/options.js";
 
-import Guardian from "@/components/Guardian.vue";
+import GuardianInput from "@/components/GuardianInput.vue";
+import GuardianClass from "@/components/GuardianClass.vue";
+import EncounterContainer from "@/components/EncounterContainer.vue";
+import InfoModal from "@/components/InfoModal.vue";
 
 export default {
   name: "App",
-  components: { Guardian },
+  components: { GuardianInput, GuardianClass, EncounterContainer, InfoModal },
   data() {
     return {
       showInfo: false,
@@ -238,12 +160,13 @@ export default {
 
       return roll;
     },
-    reRollEncounter(encounterIndex, guardianName) {
+    reRollGuardianEncounter(encounterIndex, guardianName) {
+      console.log("hi");
       this.raid.encounters[encounterIndex].rolls[
         guardianName
       ] = this.genEncounterOption();
     },
-    reRollEncounterExotic(encounterIndex, guardianName, originalRoll) {
+    reRollGuardianExotic(encounterIndex, guardianName, originalRoll) {
       const newRoll = originalRoll.split(" - ")[0];
       this.raid.encounters[encounterIndex].rolls[guardianName] = newRoll.concat(
         ` - ${this.genRandomOption(EXOTICS)}`

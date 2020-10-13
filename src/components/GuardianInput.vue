@@ -13,7 +13,7 @@
 
 <script>
 export default {
-  name: "Guardian",
+  name: "GuardianInput",
   props: ["gNum", "value"],
   methods: {
     sendName(e) {
