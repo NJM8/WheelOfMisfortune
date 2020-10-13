@@ -101,7 +101,10 @@
         :key="index"
         class="guardianCard encounterMargin"
       >
-        <span class="encounterName">{{ encounter.name }}</span>
+        <div class="encounterContainer">
+          <span class="encounterName">{{ encounter.name }}</span>
+          <span class="">{{ encounter.teamMod }}</span>
+        </div>
         <div
           v-for="(encounterRoll, guardianName) in encounter.rolls"
           :key="guardianName"
@@ -147,38 +150,35 @@ export default {
       guardianClasses: ["Warlock", "Titan", "Hunter"],
       classAffinity: ["Solar", "Void", "Arc"],
       subClasses: ["Top Tree", "Middle Tree", "Bottom Tree"],
+      teamMods: [
+        "No HUD, Entire Team",
+        "No Comms +Player",
+        "No Mods, Entire Team",
+      ],
       encounterRolls: [
         "Triple Snipers",
         "Triple Grenade Launchers",
         "Triple Shotguns",
+        "Triple Bows",
+        "Double Side Arms",
+        "Double Auto Rifles",
+        "Double SMG's, GL",
+        "Double Hand Cannons",
         "All Blues",
         "All Blues +Exotic",
         "All Greens",
         "All Greens +Exotic",
-        "No Exotics",
-        "Only Abilites",
-        "DIM Random loadout",
-        "Double Side Arms",
-        "Hand cannon, Side Arm, GL",
-        "Sniper, Shotgun, Any",
-        "Side arm, GL, Any",
         "Only Void weapons",
         "Only Arc weapons",
         "Only Solar weapons",
-        "Only your exotic weapon",
-        "Only your exotic weapon +Exotic",
-        "Double Auto Rifles",
-        "Shotgun, Auto Rifle, Linear Fusion",
-        "Triple Bows",
-        "Bow +Exotic",
-        "Bow, Sniper, Any",
-        "Double SMG's, GL",
-        "Year 1 Weapons only",
-        "SMG, +Exotic",
+        "Only Abilites",
+        "DIM Random loadout",
+        "Only exotic weapon, Guardian choice",
+        "Only exotic weapon +Exotic",
         "Full Auto Only, tape/hold down fire button",
         "Rainbow: White, Blue, Purple",
-        "No comms",
-        "No Hud (entire team) +Respin",
+        "Only Close Range Weapons",
+        "Only Long Range Weapons",
       ],
       exotics: [
         "Sweet Business",
@@ -330,8 +330,23 @@ export default {
     addEncounter() {
       const newEncounter = {
         name: this.newEncounterName,
+        teamMod: "",
         rolls: {},
       };
+
+      newEncounter.teamMod =
+        this.genRandomOption([...Array(20).keys()].map((i) => i + 1)) === 1
+          ? this.genRandomOption(this.teamMods)
+          : "";
+
+      if (newEncounter.teamMod && newEncounter.teamMod.includes("+Player")) {
+        newEncounter.teamMod = newEncounter.teamMod.concat(
+          " - ",
+          this.genRandomOption(
+            this.raid.guardians.map((guardian) => guardian.name)
+          )
+        );
+      }
       this.raid.guardians.forEach(
         (guardian) =>
           (newEncounter.rolls[guardian.name] = this.genEncounterOption())
@@ -342,9 +357,6 @@ export default {
     },
     genEncounterOption() {
       let roll = this.genRandomOption(this.encounterRolls);
-      if (roll.includes("+Respin")) {
-        roll = roll.concat(` - ${this.genRandomOption(this.encounterRolls)}`);
-      }
       if (roll.includes("+Exotic")) {
         roll = roll.concat(` - ${this.genRandomOption(this.exotics)}`);
       }
@@ -557,5 +569,6 @@ export default {
   font-size: 1.4rem;
   font-weight: 600;
   font-style: italic;
+  margin-bottom: 6px;
 }
 </style>
