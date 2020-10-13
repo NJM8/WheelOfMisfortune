@@ -146,14 +146,19 @@ export default {
       }
       this.raid.guardians.forEach(
         (guardian) =>
-          (newEncounter.rolls[guardian.name] = this.genEncounterOption())
+          (newEncounter.rolls[guardian.name] = this.genEncounterOption(
+            guardian.name
+          ))
       );
 
       this.raid.encounters.push(newEncounter);
       this.newEncounterName = "";
     },
-    genEncounterOption() {
-      let roll = this.genRandomOption(ENCOUNTER_ROLLS);
+    genEncounterOption(guardianName) {
+      const existingRolls = this.raid.encounters.map(
+        (encounter) => encounter.rolls[guardianName]
+      );
+      let roll = this.genRandomOption(ENCOUNTER_ROLLS, existingRolls);
       if (roll.includes("+Exotic")) {
         roll = roll.concat(` - ${this.genRandomOption(EXOTICS)}`);
       }
@@ -161,10 +166,9 @@ export default {
       return roll;
     },
     reRollGuardianEncounter(encounterIndex, guardianName) {
-      console.log("hi");
       this.raid.encounters[encounterIndex].rolls[
         guardianName
-      ] = this.genEncounterOption();
+      ] = this.genEncounterOption(guardianName);
     },
     reRollGuardianExotic(encounterIndex, guardianName, originalRoll) {
       const newRoll = originalRoll.split(" - ")[0];
