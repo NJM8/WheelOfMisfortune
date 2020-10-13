@@ -114,9 +114,16 @@
             <p class="marginRight">{{ encounterRoll }}</p>
             <button
               @click="reRollEncounter(index, guardianName)"
-              class="baseButton"
+              class="baseButton marginRight"
             >
               Re Roll
+            </button>
+            <button
+              v-if="encounterRoll.includes('+Exotic')"
+              @click="reRollEncounterExotic(index, guardianName, encounterRoll)"
+              class="baseButton"
+            >
+              Re Roll Exotic
             </button>
           </div>
         </div>
@@ -364,9 +371,15 @@ export default {
       return roll;
     },
     reRollEncounter(encounterIndex, guardianName) {
-      this.raid.encounters[encounterIndex][
+      this.raid.encounters[encounterIndex].rolls[
         guardianName
       ] = this.genEncounterOption();
+    },
+    reRollEncounterExotic(encounterIndex, guardianName, originalRoll) {
+      const newRoll = originalRoll.split(" - ")[0];
+      this.raid.encounters[encounterIndex].rolls[guardianName] = newRoll.concat(
+        ` - ${this.genRandomOption(this.exotics)}`
+      );
     },
     removeEncounter(index) {
       this.raid.encounters.splice(index, 1);
