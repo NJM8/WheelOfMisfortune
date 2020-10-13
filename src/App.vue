@@ -328,8 +328,14 @@ export default {
     }
   },
   methods: {
-    genRandomOption(dataSet) {
-      return dataSet[Math.floor(Math.random() * dataSet.length)];
+    genRandomOption(dataSet, previousSelections) {
+      let newOption = dataSet[Math.floor(Math.random() * dataSet.length)];
+      if (previousSelections) {
+        while (previousSelections.includes(newOption)) {
+          newOption = dataSet[Math.floor(Math.random() * dataSet.length)];
+        }
+      }
+      return newOption;
     },
     chooseRaid() {
       this.raid.name = this.genRandomOption(this.raids);
@@ -341,9 +347,14 @@ export default {
         rolls: {},
       };
 
+      const existingTeamMods = this.raid.encounters
+        .map((encounter) => encounter.teamMod)
+        .filter((mod) => mod !== "");
+
       newEncounter.teamMod =
-        this.genRandomOption([...Array(20).keys()].map((i) => i + 1)) === 1
-          ? this.genRandomOption(this.teamMods)
+        this.genRandomOption([...Array(2).keys()].map((i) => i + 1)) === 1 &&
+        existingTeamMods.length < 3
+          ? this.genRandomOption(this.teamMods, existingTeamMods)
           : "";
 
       if (newEncounter.teamMod && newEncounter.teamMod.includes("+Player")) {
