@@ -1,11 +1,14 @@
 <template>
   <div id="app" class="appContainer">
-    <h1>Wheel of Misfortune</h1>
-    <button class="infoButton" @click="showInfo = !showInfo">Info</button>
+    <img src="./assets/ProphecyBackground.jpeg" alt="" class="background" />
+    <h1 class="card">Wheel of Misfortune</h1>
+    <button class="baseButton infoButton" @click="showInfo = !showInfo">
+      Info
+    </button>
     <div v-if="showInfo" class="infoPosition">
       <p>Welcome to Wheel of Misfortune</p>
       <p>
-        Click Choose Raid to get started, fill out all gaurdian names, then you
+        Click Choose Raid to get started, fill out all guardian names, then you
         will be able to select classes and subClasses
       </p>
       <p>Finally click Add Encounter to generate encounter loadouts</p>
@@ -42,54 +45,81 @@
       </p>
     </div>
     <div style="width: 200px">
-      <button @click="chooseRaid" class="marginRight">Choose Raid</button>
-      <button v-if="raid.name.length > 0" @click="resetRaid">Reset Raid</button>
+      <button @click="chooseRaid" class="baseButton marginRight">
+        Choose Raid
+      </button>
+      <button v-if="raid.name.length > 0" class="baseButton" @click="resetRaid">
+        Reset Raid
+      </button>
     </div>
-    <h2>{{ raid.name }}</h2>
+    <h1 v-if="raid.name.length > 0" class="card raidName">{{ raid.name }}</h1>
     <br />
-    <div v-if="raid.name.length > 0" class="gaurdianContainer">
-      <div v-for="(guardian, index) in raid.gaurdians" :key="index">
-        <Guardian v-model="raid.gaurdians[index].name" :g-num="index" />
+    <div v-if="raid.name.length > 0" class="guardianContainer">
+      <div v-for="(guardian, index) in raid.guardians" :key="index">
+        <Guardian v-model="raid.guardians[index].name" :g-num="index" />
       </div>
     </div>
     <br />
     <div v-if="showChooseSubClasses && raid.name.length > 0" class="mainButton">
-      <button @click="genClasses">Choose Class and SubClasses</button>
+      <button @click="genClasses" class="baseButton">
+        Choose Class and SubClasses
+      </button>
     </div>
-    <div v-if="showEncounters" class="gaurdianContainer">
-      <div v-for="(guardian, index) in raid.gaurdians" :key="index">
-        <div class="encounterContainer">
-          <h4 class="marginRight">{{ guardian.name }}:</h4>
-          <span class="marginRight">{{ guardian.class }}</span>
-          <span class="marginRight">{{ guardian.affinity }}</span>
-          <span class="marginRight" style="padding-bottom: 8px">{{
-            guardian.subclass
-          }}</span>
-          <button @click="reRollClass(index)">Re Roll</button>
+    <br />
+    <div v-if="showEncounters" class="guardianContainer">
+      <div v-for="(guardian, index) in raid.guardians" :key="index">
+        <div class="encounterContainer guardianCard">
+          <span class="guardianName marginRight">{{ guardian.name }}:</span>
+          <span class="guardianClass marginRight"
+            >{{ guardian.affinity }}, {{ guardian.class }},
+            {{ guardian.subclass }}</span
+          >
+          <button @click="reRollClass(index)" class="baseButton">
+            Re Roll
+          </button>
         </div>
       </div>
     </div>
     <div v-if="showEncounters" class="mainButton">
-      <button @click="addEncounter">Add Encounter</button>
+      <input
+        type="text"
+        v-model="newEncounterName"
+        placeholder="Encounter Name"
+        class="card nameInput encounterNameInput"
+      />
+      <button
+        @click="addEncounter"
+        class="baseButton"
+        :disabled="newEncounterName.length === 0"
+      >
+        Add Encounter
+      </button>
     </div>
     <div class="encounterContainer">
-      <div v-for="(encounter, index) in raid.encounters" :key="index">
+      <div
+        v-for="(encounter, index) in raid.encounters"
+        :key="index"
+        class="guardianCard encounterMargin"
+      >
+        <span class="encounterName">{{ encounter.name }}</span>
         <div
-          v-for="(encounterRoll, gaurdianName) in encounter"
-          :key="gaurdianName"
+          v-for="(encounterRoll, guardianName) in encounter.rolls"
+          :key="guardianName"
         >
           <div class="encounterInnerContainer">
-            <h4 class="marginRight">{{ gaurdianName }}:</h4>
+            <span class="guardianName marginRight">{{ guardianName }}:</span>
             <p class="marginRight">{{ encounterRoll }}</p>
-            <button @click="reRollEncounter(index, gaurdianName)">
+            <button
+              @click="reRollEncounter(index, guardianName)"
+              class="baseButton"
+            >
               Re Roll
             </button>
           </div>
         </div>
-        <button class="mainButton" @click="removeEncounter(index)">
+        <button class="baseButton mainButton" @click="removeEncounter(index)">
           Remove Encounter
         </button>
-        <p>-----------------------------</p>
       </div>
     </div>
   </div>
@@ -104,6 +134,7 @@ export default {
   data() {
     return {
       showInfo: false,
+      newEncounterName: "",
       raids: [
         "Eater of Worlds",
         "Scourge of The Past",
@@ -223,7 +254,7 @@ export default {
       ],
       raid: {
         name: "",
-        gaurdians: [
+        guardians: [
           {
             name: "",
             class: "",
@@ -259,34 +290,34 @@ export default {
             class: "",
             affinity: "",
             subclass: "",
-          }
+          },
         ],
-        encounters: []
+        encounters: [],
       },
     };
   },
   computed: {
     showEncounters() {
-      return this.raid.gaurdians.every((guardian) =>
+      return this.raid.guardians.every((guardian) =>
         Object.values(guardian).every((val) => val.length > 0)
       );
     },
     showChooseSubClasses() {
-      return this.raid.gaurdians.every((guardian) => guardian.name.length > 0);
+      return this.raid.guardians.every((guardian) => guardian.name.length > 0);
     },
   },
   watch: {
     raid: {
       deep: true,
       handler() {
-        localStorage.setItem('wheel-of-misfortune', JSON.stringify(this.raid))
-      }
-    }
+        localStorage.setItem("wheel-of-misfortune", JSON.stringify(this.raid));
+      },
+    },
   },
   created() {
-    const savedRaid = localStorage.getItem('wheel-of-misfortune') || false
+    const savedRaid = localStorage.getItem("wheel-of-misfortune") || false;
     if (savedRaid) {
-      this.raid = JSON.parse(savedRaid)
+      this.raid = JSON.parse(savedRaid);
     }
   },
   methods: {
@@ -297,12 +328,17 @@ export default {
       this.raid.name = this.genRandomOption(this.raids);
     },
     addEncounter() {
-      const newEncounter = {};
-      this.raid.gaurdians.forEach(
-        (guardian) => (newEncounter[guardian.name] = this.genEncounterOption())
+      const newEncounter = {
+        name: this.newEncounterName,
+        rolls: {},
+      };
+      this.raid.guardians.forEach(
+        (guardian) =>
+          (newEncounter.rolls[guardian.name] = this.genEncounterOption())
       );
 
       this.raid.encounters.push(newEncounter);
+      this.newEncounterName = "";
     },
     genEncounterOption() {
       let roll = this.genRandomOption(this.encounterRolls);
@@ -315,31 +351,31 @@ export default {
 
       return roll;
     },
-    reRollEncounter(encounterIndex, gaurdianName) {
+    reRollEncounter(encounterIndex, guardianName) {
       this.raid.encounters[encounterIndex][
-        gaurdianName
+        guardianName
       ] = this.genEncounterOption();
     },
     removeEncounter(index) {
       this.raid.encounters.splice(index, 1);
     },
     genClasses() {
-      this.raid.gaurdians.forEach((guardian) => {
+      this.raid.guardians.forEach((guardian) => {
         guardian.class = this.genRandomOption(this.guardianClasses);
         guardian.affinity = this.genRandomOption(this.classAffinity);
         guardian.subclass = this.genRandomOption(this.subClasses);
       });
     },
     reRollClass(index) {
-      const thisGaurdian = this.raid.gaurdians[index];
-      thisGaurdian.class = this.genRandomOption(this.guardianClasses);
-      thisGaurdian.affinity = this.genRandomOption(this.classAffinity);
-      thisGaurdian.subclass = this.genRandomOption(this.subClasses);
+      const thisguardian = this.raid.guardians[index];
+      thisguardian.class = this.genRandomOption(this.guardianClasses);
+      thisguardian.affinity = this.genRandomOption(this.classAffinity);
+      thisguardian.subclass = this.genRandomOption(this.subClasses);
     },
     resetRaid() {
       this.raid = {
         name: "",
-        gaurdians: [
+        guardians: [
           {
             name: "",
             class: "",
@@ -375,12 +411,12 @@ export default {
             class: "",
             affinity: "",
             subclass: "",
-          }
+          },
         ],
-        encounters: []
-      }
-    }
-  }
+        encounters: [],
+      };
+    },
+  },
 };
 </script>
 
@@ -392,6 +428,56 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 20px;
+}
+.background {
+  /* Set rules to fill background */
+  min-height: 100%;
+  min-width: 1024px;
+
+  /* Set up proportionate scaling */
+  width: 100%;
+  height: auto;
+
+  /* Set up positioning */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -10;
+  will-change: scroll-position;
+}
+.card {
+  padding: 4px 8px;
+  border: 1px solid ghostwhite;
+  border-radius: 4px;
+  background-color: ghostwhite;
+}
+.guardianCard {
+  color: ghostwhite;
+  padding: 8px 16px;
+  background-color: rgba(25, 125, 75, 0.4);
+  box-shadow: 0 1px 5px 1px rgba(0, 0, 0, 0.15);
+  letter-spacing: 0.75px;
+}
+.baseButton {
+  cursor: pointer;
+  padding: 4px 8px;
+  border: 1px solid ghostwhite;
+  font-weight: 600;
+  border-radius: 4px;
+  background-color: ghostwhite;
+}
+.raidName {
+  padding: 8px 16px;
+  font-style: italic;
+  font-weight: 700;
+}
+.guardianName {
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 4px;
+}
+.guardianClass {
+  padding-bottom: 8px;
 }
 .sideBar {
   display: flex;
@@ -410,8 +496,9 @@ export default {
   transform: translateX(-400px);
   opacity: 0;
 }
-.gaurdianContainer {
+.guardianContainer {
   width: 100%;
+  max-width: 1600px;
   display: flex;
   justify-content: space-between;
   flex-wrap: wrap;
@@ -426,6 +513,7 @@ export default {
 .encounterContainer {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 .encounterInnerContainer {
   display: flex;
@@ -438,6 +526,7 @@ export default {
 }
 .mainButton {
   margin-top: 24px;
+  margin-bottom: 8px;
 }
 .infoButton {
   position: absolute;
@@ -454,5 +543,19 @@ export default {
   background-color: white;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
   padding: 16px;
+}
+.nameInput {
+  cursor: pointer;
+}
+.encounterNameInput {
+  margin-right: 16px;
+}
+.encounterMargin {
+  margin: 16px 0px;
+}
+.encounterName {
+  font-size: 1.4rem;
+  font-weight: 600;
+  font-style: italic;
 }
 </style>

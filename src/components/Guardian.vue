@@ -1,7 +1,13 @@
 <template>
   <div>
-    <p>Guardian #{{ gNum + 1 }}:</p>
-    <input type="text" :value="value" @input="sendName" />
+    <p class="guardianCard">Guardian #{{ gNum + 1 }}:</p>
+    <input
+      type="text"
+      :value="value"
+      @input="sendName"
+      placeholder="Guardian Name"
+      class="card"
+    />
   </div>
 </template>
 
@@ -17,7 +23,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .wrapper {
   display: flex;
 }
