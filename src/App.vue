@@ -137,6 +137,17 @@
 
 <script>
 import "@/assets/styles.css";
+import {
+  RAIDS,
+  GUARDIAN_CLASSES,
+  CLASS_AFFINITY,
+  SUB_CLASSES,
+  TEAM_MODS,
+  ENCOUNTER_ROLLS,
+  EXOTICS,
+  BASE_RAID,
+} from "@/helpers/options.js";
+
 import Guardian from "@/components/Guardian.vue";
 
 export default {
@@ -146,162 +157,7 @@ export default {
     return {
       showInfo: false,
       newEncounterName: "",
-      raids: [
-        "Eater of Worlds",
-        "Scourge of The Past",
-        "Leviathan",
-        "Spire of Stars",
-        "Garden of Salvation",
-        "Crown of Sorrow",
-        "Last Wish",
-      ],
-      guardianClasses: ["Warlock", "Titan", "Hunter"],
-      classAffinity: ["Solar", "Void", "Arc"],
-      subClasses: ["Top Tree", "Middle Tree", "Bottom Tree"],
-      teamMods: [
-        "No HUD, Entire Team",
-        "No Comms +Player",
-        "No Mods, Entire Team",
-      ],
-      encounterRolls: [
-        "Triple Snipers",
-        "Triple Grenade Launchers",
-        "Triple Shotguns",
-        "Triple Bows",
-        "Double Side Arms",
-        "Double Auto Rifles",
-        "Double SMG's, GL",
-        "Double Hand Cannons",
-        "All Blues",
-        "All Blues +Exotic",
-        "All Greens",
-        "All Greens +Exotic",
-        "Only Void weapons",
-        "Only Arc weapons",
-        "Only Solar weapons",
-        "Only Abilites",
-        "DIM Random loadout",
-        "Only exotic weapon, Guardian choice",
-        "Only exotic weapon +Exotic",
-        "Full Auto Only, tape/hold down fire button",
-        "Rainbow: White, Blue, Purple",
-        "Only Close Range Weapons",
-        "Only Long Range Weapons",
-      ],
-      exotics: [
-        "Sweet Business",
-        "Rat King",
-        "Sturm",
-        "The Jade Rabbit",
-        "Cerberus+1",
-        "Ace of Spades",
-        "The Last Word",
-        "Outbreak Perfected",
-        "Monte Carlo",
-        "Traveler's Chosen",
-        "Mida Multi-Tool",
-        "The Huckleberry",
-        "Wish-Ender",
-        "The Chaperone",
-        "Arbalest",
-        "Bad Juju",
-        "Bastion",
-        "Vigilance Wing",
-        "Crimson",
-        "SUROS Regime",
-        "Malfeasance",
-        "Izanagi's Burden",
-        "Thorn",
-        "Lumina",
-        "Witherhoard",
-        "Coldheart",
-        "Graviton Lance",
-        "Hard Light",
-        "Prometheus Lens",
-        "Trinity Ghoul",
-        "Jotunn",
-        "Eriana's Vow",
-        "Devil's Ruin",
-        "Ruinous Effigy",
-        "Fighting Lion",
-        "Skyburner's Oath",
-        "Merciless",
-        "Telesto",
-        "Wavesplitter",
-        "LeMonarque",
-        "Divinity",
-        "Tommy's Matchbook",
-        "Sunshot",
-        "Riskrunner",
-        "Borealis",
-        "Polaris Lance",
-        "Lord of Wolves",
-        "Tarrabah",
-        "Symmetry",
-        "The Fourth Horseman",
-        "The Prospector",
-        "D.A.R.C.I.",
-        "Worldline Zero",
-        "One Thousand Voices",
-        "The Queenbreaker",
-        "Truth",
-        "Leviathan's Breath",
-        "Tractor Cannon",
-        "The Wardcliff Coil",
-        "Sleeper Simulant",
-        "Two-Tailed Fox",
-        "Thunderlord",
-        "Deathbringer",
-        "Heir Apparent",
-        "Legend of Acrius",
-        "The Colony",
-        "Whisper of the Worm",
-        "Black Talon",
-        "Anarchy",
-        "Xenophage",
-      ],
-      raid: {
-        name: "",
-        guardians: [
-          {
-            name: "",
-            class: "",
-            affinity: "",
-            subclass: "",
-          },
-          {
-            name: "",
-            class: "",
-            affinity: "",
-            subclass: "",
-          },
-          {
-            name: "",
-            class: "",
-            affinity: "",
-            subclass: "",
-          },
-          {
-            name: "",
-            class: "",
-            affinity: "",
-            subclass: "",
-          },
-          {
-            name: "",
-            class: "",
-            affinity: "",
-            subclass: "",
-          },
-          {
-            name: "",
-            class: "",
-            affinity: "",
-            subclass: "",
-          },
-        ],
-        encounters: [],
-      },
+      raid: { ...BASE_RAID },
     };
   },
   computed: {
@@ -339,7 +195,7 @@ export default {
       return newOption;
     },
     chooseRaid() {
-      this.raid.name = this.genRandomOption(this.raids);
+      this.raid.name = this.genRandomOption(RAIDS);
     },
     addEncounter() {
       const newEncounter = {
@@ -355,7 +211,7 @@ export default {
       newEncounter.teamMod =
         this.genRandomOption([...Array(20).keys()].map((i) => i + 1)) === 1 &&
         existingTeamMods.length < 3
-          ? this.genRandomOption(this.teamMods, existingTeamMods)
+          ? this.genRandomOption(TEAM_MODS, existingTeamMods)
           : "";
 
       if (newEncounter.teamMod && newEncounter.teamMod.includes("+Player")) {
@@ -375,9 +231,9 @@ export default {
       this.newEncounterName = "";
     },
     genEncounterOption() {
-      let roll = this.genRandomOption(this.encounterRolls);
+      let roll = this.genRandomOption(ENCOUNTER_ROLLS);
       if (roll.includes("+Exotic")) {
-        roll = roll.concat(` - ${this.genRandomOption(this.exotics)}`);
+        roll = roll.concat(` - ${this.genRandomOption(EXOTICS)}`);
       }
 
       return roll;
@@ -390,7 +246,7 @@ export default {
     reRollEncounterExotic(encounterIndex, guardianName, originalRoll) {
       const newRoll = originalRoll.split(" - ")[0];
       this.raid.encounters[encounterIndex].rolls[guardianName] = newRoll.concat(
-        ` - ${this.genRandomOption(this.exotics)}`
+        ` - ${this.genRandomOption(EXOTICS)}`
       );
     },
     removeEncounter(index) {
@@ -398,60 +254,19 @@ export default {
     },
     genClasses() {
       this.raid.guardians.forEach((guardian) => {
-        guardian.class = this.genRandomOption(this.guardianClasses);
-        guardian.affinity = this.genRandomOption(this.classAffinity);
-        guardian.subclass = this.genRandomOption(this.subClasses);
+        guardian.class = this.genRandomOption(GUARDIAN_CLASSES);
+        guardian.affinity = this.genRandomOption(CLASS_AFFINITY);
+        guardian.subclass = this.genRandomOption(SUB_CLASSES);
       });
     },
     reRollClass(index) {
       const thisguardian = this.raid.guardians[index];
-      thisguardian.class = this.genRandomOption(this.guardianClasses);
-      thisguardian.affinity = this.genRandomOption(this.classAffinity);
-      thisguardian.subclass = this.genRandomOption(this.subClasses);
+      thisguardian.class = this.genRandomOption(GUARDIAN_CLASSES);
+      thisguardian.affinity = this.genRandomOption(CLASS_AFFINITY);
+      thisguardian.subclass = this.genRandomOption(SUB_CLASSES);
     },
     resetRaid() {
-      this.raid = {
-        name: "",
-        guardians: [
-          {
-            name: "",
-            class: "",
-            affinity: "",
-            subclass: "",
-          },
-          {
-            name: "",
-            class: "",
-            affinity: "",
-            subclass: "",
-          },
-          {
-            name: "",
-            class: "",
-            affinity: "",
-            subclass: "",
-          },
-          {
-            name: "",
-            class: "",
-            affinity: "",
-            subclass: "",
-          },
-          {
-            name: "",
-            class: "",
-            affinity: "",
-            subclass: "",
-          },
-          {
-            name: "",
-            class: "",
-            affinity: "",
-            subclass: "",
-          },
-        ],
-        encounters: [],
-      };
+      this.raid = { ...BASE_RAID };
     },
   },
 };
