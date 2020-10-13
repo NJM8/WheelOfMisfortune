@@ -22,9 +22,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.wrapper {
-  display: flex;
-}
-</style>

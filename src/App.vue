@@ -136,6 +136,7 @@
 </template>
 
 <script>
+import "@/assets/styles.css";
 import Guardian from "@/components/Guardian.vue";
 
 export default {
@@ -352,7 +353,7 @@ export default {
         .filter((mod) => mod !== "");
 
       newEncounter.teamMod =
-        this.genRandomOption([...Array(2).keys()].map((i) => i + 1)) === 1 &&
+        this.genRandomOption([...Array(20).keys()].map((i) => i + 1)) === 1 &&
         existingTeamMods.length < 3
           ? this.genRandomOption(this.teamMods, existingTeamMods)
           : "";
@@ -455,144 +456,3 @@ export default {
   },
 };
 </script>
-
-<style>
-#app {
-  font-family: "Avenir", Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 20px;
-}
-.background {
-  /* Set rules to fill background */
-  min-height: 100%;
-  min-width: 1024px;
-
-  /* Set up proportionate scaling */
-  width: 100%;
-  height: auto;
-
-  /* Set up positioning */
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: -10;
-  will-change: scroll-position;
-}
-.card {
-  padding: 4px 8px;
-  border: 1px solid ghostwhite;
-  border-radius: 4px;
-  background-color: ghostwhite;
-}
-.guardianCard {
-  color: ghostwhite;
-  padding: 8px 16px;
-  background-color: rgba(25, 125, 75, 0.4);
-  box-shadow: 0 1px 5px 1px rgba(0, 0, 0, 0.15);
-  letter-spacing: 0.75px;
-}
-.baseButton {
-  cursor: pointer;
-  padding: 4px 8px;
-  border: 1px solid ghostwhite;
-  font-weight: 600;
-  border-radius: 4px;
-  background-color: ghostwhite;
-}
-.raidName {
-  padding: 8px 16px;
-  font-style: italic;
-  font-weight: 700;
-}
-.guardianName {
-  font-size: 1.1rem;
-  font-weight: 600;
-  padding: 4px;
-}
-.guardianClass {
-  padding-bottom: 8px;
-}
-.sideBar {
-  display: flex;
-  flex-direction: column;
-  width: 50px;
-}
-.slide-enter {
-  transform: translateX(400px);
-  opacity: 0;
-}
-.slide-enter-active {
-  transition: all 500ms ease;
-}
-.slide-leave-active {
-  transition: all 500ms ease;
-  transform: translateX(-400px);
-  opacity: 0;
-}
-.guardianContainer {
-  width: 100%;
-  max-width: 1600px;
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-}
-.appContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-left: 16px;
-  padding-right: 16px;
-}
-.encounterContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-.encounterInnerContainer {
-  display: flex;
-  justify-content: center;
-  align-items: baseline;
-  height: 30px;
-}
-.marginRight {
-  margin-right: 10px;
-}
-.mainButton {
-  margin-top: 24px;
-  margin-bottom: 8px;
-}
-.infoButton {
-  position: absolute;
-  top: 30px;
-  right: 30px;
-}
-.infoPosition {
-  position: absolute;
-  width: 1000px;
-  top: 80px;
-  right: 30px;
-  border: 1px solid grey;
-  border-radius: 5px;
-  background-color: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.16);
-  padding: 16px;
-}
-.nameInput {
-  cursor: pointer;
-}
-.encounterNameInput {
-  margin-right: 16px;
-}
-.encounterMargin {
-  margin: 16px 0px;
-}
-.encounterName {
-  font-size: 1.4rem;
-  font-weight: 600;
-  font-style: italic;
-  margin-bottom: 6px;
-}
-</style>
