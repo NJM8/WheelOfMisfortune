@@ -1,24 +1,16 @@
-export const RAIDS = [
-  "Eater of Worlds",
-  "Scourge of The Past",
-  "Leviathan",
-  "Spire of Stars",
-  "Garden of Salvation",
-  "Crown of Sorrow",
-  "Last Wish",
-]
+export const RAIDS = ["Garden of Salvation", "Deep Stone Crypt", "Last Wish"];
 
-export const GUARDIAN_CLASSES = ["Warlock", "Titan", "Hunter"]
+export const GUARDIAN_CLASSES = ["Warlock", "Titan", "Hunter"];
 
-export const CLASS_AFFINITY = ["Solar", "Void", "Arc"]
+export const CLASS_AFFINITY = ["Solar", "Void", "Arc", "Stasis"];
 
-export const SUB_CLASSES = ["Top Tree", "Middle Tree", "Bottom Tree"]
+export const SUB_CLASSES = ["Top Tree", "Middle Tree", "Bottom Tree"];
 
 export const TEAM_MODS = [
   "No HUD, Entire Team",
   "No Comms +Player",
   "No Mods, Entire Team",
-]
+];
 
 export const ENCOUNTER_ROLLS = [
   "Triple Snipers",
@@ -44,7 +36,7 @@ export const ENCOUNTER_ROLLS = [
   "Rainbow: White, Blue, Purple",
   "Only Close Range Weapons",
   "Only Long Range Weapons",
-]
+];
 
 export const EXOTICS = [
   "Sweet Business",
@@ -117,7 +109,12 @@ export const EXOTICS = [
   "Black Talon",
   "Anarchy",
   "Xenophage",
-]
+  "No Time To Explain",
+  "Duality",
+  "Cloudstrike",
+  "Salvation's Grip",
+  "Eyes of Tomorrow",
+];
 
 export const BASE_RAID = {
   name: "",
@@ -160,4 +157,4 @@ export const BASE_RAID = {
     },
   ],
   encounters: [],
-}
+};

@@ -37,14 +37,12 @@
         placeholder="Encounter Name"
         class="card nameInput encounterNameInput"
       />
-      <button
-        @click="addEncounter"
-        class="baseButton"
-        :disabled="newEncounterName.length === 0"
-      >
+      <button @click="addEncounter" class="baseButton">
+        <!-- :disabled="newEncounterName.length === 0" -->
         Add Encounter
       </button>
     </div>
+    <p>{{ raid.encounters.map((e) => e.teamMod) }}</p>
     <EncounterContainer
       :encounters="raid.encounters"
       @re-roll-guardian-encounter="reRollGuardianEncounter"
@@ -85,9 +83,7 @@ export default {
   },
   computed: {
     showEncounters() {
-      return this.raid.guardians.every((guardian) =>
-        Object.values(guardian).every((val) => val.length > 0)
-      );
+      return this.raid.guardians.every((guardian) => guardian.class.length > 0);
     },
     showChooseSubClasses() {
       return this.raid.guardians.every((guardian) => guardian.name.length > 0);
@@ -131,9 +127,12 @@ export default {
         .map((encounter) => encounter.teamMod)
         .filter((mod) => mod !== "");
 
+      const usedAllTeamMods = existingTeamMods.length === 3;
+      const shouldUseTeamMod =
+        this.genRandomOption([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]) === 1;
+
       newEncounter.teamMod =
-        this.genRandomOption([...Array(20).keys()].map((i) => i + 1)) === 1 &&
-        existingTeamMods.length < 3
+        shouldUseTeamMod && !usedAllTeamMods
           ? this.genRandomOption(TEAM_MODS, existingTeamMods)
           : "";
 
@@ -184,14 +183,18 @@ export default {
       this.raid.guardians.forEach((guardian) => {
         guardian.class = this.genRandomOption(GUARDIAN_CLASSES);
         guardian.affinity = this.genRandomOption(CLASS_AFFINITY);
-        guardian.subclass = this.genRandomOption(SUB_CLASSES);
+        guardian.affinity === "Stasis"
+          ? (guardian.subclass = "")
+          : (guardian.subclass = this.genRandomOption(SUB_CLASSES));
       });
     },
     reRollClass(index) {
       const thisguardian = this.raid.guardians[index];
       thisguardian.class = this.genRandomOption(GUARDIAN_CLASSES);
       thisguardian.affinity = this.genRandomOption(CLASS_AFFINITY);
-      thisguardian.subclass = this.genRandomOption(SUB_CLASSES);
+      thisguardian.affinity === "Stasis"
+        ? (thisguardian.subclass = "")
+        : (thisguardian.subclass = this.genRandomOption(SUB_CLASSES));
     },
     resetRaid() {
       this.raid = {};

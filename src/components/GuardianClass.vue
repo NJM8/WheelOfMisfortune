@@ -4,8 +4,8 @@
       <div class="encounterContainer guardianCard">
         <span class="guardianName marginRight">{{ guardian.name }}:</span>
         <span class="guardianClass marginRight"
-          >{{ guardian.affinity }}, {{ guardian.class }},
-          {{ guardian.subclass }}</span
+          >{{ guardian.affinity }}, {{ guardian.class }}
+          {{ guardian.subclass ? `, ${guardian.subclass}` : "" }}</span
         >
         <button @click="reRollClass(index)" class="baseButton">
           Re Roll
