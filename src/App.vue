@@ -37,12 +37,14 @@
         placeholder="Encounter Name"
         class="card nameInput encounterNameInput"
       />
-      <button @click="addEncounter" class="baseButton">
-        <!-- :disabled="newEncounterName.length === 0" -->
+      <button
+        @click="addEncounter"
+        class="baseButton"
+        :disabled="newEncounterName.length === 0"
+      >
         Add Encounter
       </button>
     </div>
-    <p>{{ raid.encounters.map((e) => e.teamMod) }}</p>
     <EncounterContainer
       :encounters="raid.encounters"
       @re-roll-guardian-encounter="reRollGuardianEncounter"
